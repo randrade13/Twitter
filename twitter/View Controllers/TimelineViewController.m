@@ -17,7 +17,6 @@
 
 @property NSArray *tweet_array;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
 
 @end
@@ -82,6 +81,7 @@
     Tweet *tweet = self.tweet_array[indexPath.row];
     
     // NSLog(@"%@", tweet.user);
+    // Update cell properties
     cell.name.text = tweet.user.name;
     cell.screen_name.text = tweet.user.screenName;
     
