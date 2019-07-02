@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (weak, nonatomic) IBOutlet UIImageView *profile_image;
 @property (weak, nonatomic) IBOutlet UILabel *screen_name;
-@property (weak, nonatomic) IBOutlet UILabel *user_name;
+@property (weak, nonatomic) IBOutlet UILabel *name;
 @property (weak, nonatomic) IBOutlet UILabel *date_posted;
 @property (weak, nonatomic) IBOutlet UILabel *tweet_text;
 @property (weak, nonatomic) IBOutlet UILabel *reply_count;

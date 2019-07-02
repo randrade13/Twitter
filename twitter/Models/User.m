@@ -15,7 +15,8 @@
     self = [super init];
     if (self) {
         self.name = dictionary[@"name"];
-        self.screenName = dictionary[@"screenName"];
+        self.screenName = dictionary[@"screen_name"];
+        self.profile_image_address = dictionary[@"profile_image_url_https"];
 
         // Initialize any other properties
     }
