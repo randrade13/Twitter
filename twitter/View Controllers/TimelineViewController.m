@@ -8,6 +8,7 @@
 
 #import "TimelineViewController.h"
 #import "APIManager.h"
+// Step 2 Define custom table view cell and set its reuse identifier
 #import "TweetCell.h"
 #import "UIImageView+AFNetworking.h"
 #import "TTTAttributedLabel.h"
@@ -17,6 +18,7 @@
 @interface TimelineViewController () <UITableViewDataSource, UITableViewDelegate, ComposeViewControllerDelegate>
 
 @property NSMutableArray *tweet_array;
+// Step 1 View controller has table view as subview
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
 
@@ -27,7 +29,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Setup datasource for tableView
+    // Step 3 View controller becomes its datasources and delegate
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     
@@ -45,13 +47,19 @@
 
 - (void)fetchTweets {
     // Get timeline
+    // Step 4 Get tweets is making API Request
+    // Step 5 API manager calls the completion handler passing back data
     [[APIManager shared] getHomeTimelineWithCompletion:^(NSArray *tweets, NSError *error) {
         if (tweets) {
-            self.tweet_array = tweets;
+            // Step 6 View controller stores that data passed into the completion handler
+            self.tweet_array = [NSMutableArray arrayWithArray:tweets];
             
             // NSLog(@" Successfully loaded home timeline");
             // NSLog(@"%@", self.tweet_array);
+            
+            // Step 7 reload the table view (using reload data)
             [self.tableView reloadData];
+            
             /*
              for (NSDictionary *dictionary in tweets) {
              NSString *text = dictionary[@"text"];
@@ -70,7 +78,11 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
+/* Step 8, 9, 10:
+ 8. Table view asks its dataSource for numberOfRows & cellForRowAt (i.e. the two functions are called implicitly during reload data)
+ 9. numberofRows returns number of items returned from the API
+ 10. cellForRow returns an instance  of the custom cell with that reuse identifier with it's elements populated with data at the index asked for
+*/
 - (NSInteger)tableView:(UITableView *)tableView  numberOfRowsInSection:(NSInteger)section {
     return self.tweet_array.count;
 }
@@ -83,6 +95,7 @@
     
     // NSLog(@"%@", tweet.user);
     // Update cell properties
+    cell.tweet = tweet;
     cell.name.text = tweet.user.name;
     cell.screen_name.text = tweet.user.screenName;
     
@@ -98,7 +111,7 @@
     cell.profile_image.image = nil;
     [cell.profile_image setImageWithURL:profile_image_url];
     
-    // cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;
 }
