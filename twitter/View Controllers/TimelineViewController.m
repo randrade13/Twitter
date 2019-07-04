@@ -34,6 +34,7 @@
     // Step 3 View controller becomes its datasources and delegate
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
     
     // initialize refresh control
     self.refreshControl = [[UIRefreshControl alloc] init];
