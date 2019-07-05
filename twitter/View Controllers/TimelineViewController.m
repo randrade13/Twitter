@@ -101,7 +101,6 @@
     cell.tweet = tweet;
     cell.name.text = tweet.user.name;
     cell.screen_name.text = tweet.user.screenName;
-    
     cell.date_posted.text = tweet.createdAtString;
     cell.tweet_text.text = tweet.text;
     cell.reply_count.text = [NSString stringWithFormat:@"%d", tweet.replyCount];
