@@ -16,6 +16,8 @@
 #import "ComposeViewController.h"
 #import "AppDelegate.h"
 #import "LoginViewController.h"
+#import "TweetDetailsViewController.h"
+#import "DateTools.h"
 
 @interface TimelineViewController () <UITableViewDataSource, UITableViewDelegate, ComposeViewControllerDelegate>
 
@@ -101,7 +103,11 @@
     cell.tweet = tweet;
     cell.name.text = tweet.user.name;
     cell.screen_name.text = tweet.user.screenName;
-    cell.date_posted.text = tweet.createdAtString;
+    
+    // Format short date
+    NSString *formatted_date = tweet.createdAtString.shortTimeAgoSinceNow;
+    cell.date_posted.text = formatted_date;
+    
     cell.tweet_text.text = tweet.text;
     cell.reply_count.text = [NSString stringWithFormat:@"%d", tweet.replyCount];
     cell.retweet_count.text = [NSString stringWithFormat:@"%d", tweet.retweetCount];
@@ -137,9 +143,25 @@
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     UINavigationController *navigationController = [segue destinationViewController];
-    ComposeViewController *composeController = (ComposeViewController*)navigationController.topViewController;
-    composeController.delegate = self;
-}
+    
+    if ([segue.identifier  isEqual: @"tweet_details_segue"]){
+        // Pass the selected object to the new view controller.
+        UITableViewCell *tappedCell = sender;
+        NSIndexPath *indexPath = [self.tableView indexPathForCell:tappedCell];
+        Tweet *tweet = self.tweet_array[indexPath.row];
+        
+        TweetDetailsViewController *tweetDetailViewController = [segue destinationViewController];
+        tweetDetailViewController.tweet = tweet;
+        
+        }
+    else if ([segue.identifier  isEqual: @"compose_segue"]){
+        ComposeViewController *composeController = (ComposeViewController*)navigationController.topViewController;
+        composeController.delegate = self;
+        
+        }
+    }
+
+
 
 
 @end
