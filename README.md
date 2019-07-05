@@ -20,7 +20,7 @@ The following **required** functionality is completed:
 
 The following **optional** features are implemented:
 
-- [ ] Tweet Details Page: User can tap on a tweet to view it, with controls to retweet, favorite, and reply.
+- [X] Tweet Details Page: User can tap on a tweet to view it, with controls to retweet, favorite, and reply.
 - [ ] User can view their profile in a *profile tab*
   - Contains the user header view: picture and tagline
   - Contains a section with the users basic stats: # tweets, # following, # followers
