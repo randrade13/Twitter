@@ -19,12 +19,14 @@
 #import "TweetDetailsViewController.h"
 #import "DateTools.h"
 
-@interface TimelineViewController () <UITableViewDataSource, UITableViewDelegate, ComposeViewControllerDelegate, TTTAttributedLabelDelegate>
+@interface TimelineViewController () <UITableViewDataSource, UITableViewDelegate, ComposeViewControllerDelegate, TTTAttributedLabelDelegate, UIScrollViewDelegate>
 
 @property NSMutableArray *tweet_array;
 // Step 1 View controller has table view as subview
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
+@property (assign, nonatomic) BOOL isMoreDataLoading;
+@property (strong, nonatomic) NSNumber *max_ID;
 
 @end
 
@@ -125,6 +127,8 @@
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
+    self.max_ID = cell.tweet.id_num;
+    
     return cell;
 }
 
@@ -152,6 +156,48 @@
     [[APIManager shared] logout];
 }
 
+-(void)loadMoreData{
+    
+    // ... Create the NSURLRequest (myRequest) ...
+    [[APIManager shared] loadMoreTweets:self.max_ID completion:^(NSArray *tweets, NSError *error) {
+        if (tweets) {
+
+            self.tweet_array = [NSMutableArray arrayWithArray:tweets];
+            
+            // NSLog(@" Successfully loaded home timeline");
+            // NSLog(@"%@", self.tweet_array);
+            
+            self.isMoreDataLoading = false;
+            
+            [self.tableView reloadData];
+            
+            /*
+             for (NSDictionary *dictionary in tweets) {
+             NSString *text = dictionary[@"text"];
+             
+             NSLog(@"%@", text);
+             } */
+            
+        } else {
+            NSLog(@" Error getting home timeline: %@", error.localizedDescription);
+        }
+        [self.refreshControl endRefreshing];
+    }];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    if(!self.isMoreDataLoading){
+        // Calculate the position of one screen length before the bottom of the results
+        int scrollViewContentHeight = self.tableView.contentSize.height;
+        int scrollOffsetThreshold = scrollViewContentHeight - self.tableView.bounds.size.height;
+        
+        // When the user has scrolled past the threshold, start requesting
+        if(scrollView.contentOffset.y > scrollOffsetThreshold && self.tableView.isDragging) {
+            self.isMoreDataLoading = true;
+            [self loadMoreData];
+        }
+    }
+}
 
 #pragma mark - Navigation
 
