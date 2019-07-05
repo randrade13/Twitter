@@ -19,7 +19,7 @@
 #import "TweetDetailsViewController.h"
 #import "DateTools.h"
 
-@interface TimelineViewController () <UITableViewDataSource, UITableViewDelegate, ComposeViewControllerDelegate>
+@interface TimelineViewController () <UITableViewDataSource, UITableViewDelegate, ComposeViewControllerDelegate, TTTAttributedLabelDelegate>
 
 @property NSMutableArray *tweet_array;
 // Step 1 View controller has table view as subview
@@ -108,7 +108,11 @@
     NSString *formatted_date = tweet.createdAtString.shortTimeAgoSinceNow;
     cell.date_posted.text = formatted_date;
     
+    // Configure tweet text to detect and support clickable links
+    cell.tweet_text.enabledTextCheckingTypes = NSTextCheckingTypeLink;
+    cell.tweet_text.delegate = self;
     cell.tweet_text.text = tweet.text;
+    
     cell.reply_count.text = [NSString stringWithFormat:@"%d", tweet.replyCount];
     cell.retweet_count.text = [NSString stringWithFormat:@"%d", tweet.retweetCount];
     cell.favourites_count.text = [NSString stringWithFormat:@"%d", tweet.favoriteCount];
@@ -123,9 +127,20 @@
     
     return cell;
 }
+
 - (void)didTweet:(Tweet *)tweet{
     [self.tweet_array insertObject:tweet atIndex: 0];
     [self.tableView reloadData];
+}
+
+- (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
+    
+    UIApplication *application = [UIApplication sharedApplication];
+    [application openURL:url options:@{} completionHandler:^(BOOL success) {
+        if (success) {
+            NSLog(@"Opened url");
+        }
+    }];
 }
 
 - (IBAction)didTapSignOut:(id)sender {

@@ -10,12 +10,13 @@
 #import "UIImageView+AFNetworking.h"
 #import "DateTools.h"
 #import "APIManager.h"
+#import "TTTAttributedLabel.h"
 
-@interface TweetDetailsViewController ()
+@interface TweetDetailsViewController () <TTTAttributedLabelDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *profile_image;
 @property (weak, nonatomic) IBOutlet UILabel *screen_name;
 @property (weak, nonatomic) IBOutlet UILabel *name;
-@property (weak, nonatomic) IBOutlet UILabel *tweet_text;
+@property (weak, nonatomic) IBOutlet TTTAttributedLabel *tweet_text;
 @property (weak, nonatomic) IBOutlet UILabel *date_posted;
 @property (weak, nonatomic) IBOutlet UILabel *retweet_count;
 @property (weak, nonatomic) IBOutlet UILabel *favorites_count;
@@ -38,7 +39,11 @@
     NSString *formatted_date = self.tweet.createdAtString.timeAgoSinceNow;
     self.date_posted.text = formatted_date;
     
+    // Configure tweet text to detect and support clickable links
+    self.tweet_text.enabledTextCheckingTypes = NSTextCheckingTypeLink;
+    self.tweet_text.delegate = self;
     self.tweet_text.text = self.tweet.text;
+    
     self.retweet_count.text = [NSString stringWithFormat:@"%d", self.tweet.retweetCount];
     self.favorites_count.text = [NSString stringWithFormat:@"%d", self.tweet.favoriteCount];
     
@@ -47,6 +52,16 @@
     
     self.profile_image.image = nil;
     [self.profile_image setImageWithURL:profile_image_url];
+}
+
+- (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
+    
+    UIApplication *application = [UIApplication sharedApplication];
+    [application openURL:url options:@{} completionHandler:^(BOOL success) {
+        if (success) {
+            NSLog(@"Opened url");
+        }
+    }];
 }
 
 - (IBAction)didTapRetweet:(id)sender {
