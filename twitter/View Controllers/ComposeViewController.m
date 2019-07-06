@@ -10,7 +10,7 @@
 #import "TimelineViewController.h"
 #import "APIManager.h"
 
-@interface ComposeViewController ()
+@interface ComposeViewController () <UITextViewDelegate>
 
 @end
 
@@ -19,7 +19,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.textView.delegate = self;
 }
+
 - (IBAction)didTapClose:(id)sender {
     [self dismissViewControllerAnimated:true completion:nil];
 }
@@ -36,6 +38,21 @@
     }];
     [self dismissViewControllerAnimated:true completion:nil];
 }
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
+    
+    // Set the max character limit
+    int characterLimit = 140;
+    
+    // Construct what the new text would be if we allowed the user's latest edit
+    NSString *newText = [self.textView.text stringByReplacingCharactersInRange:range withString:text];
+    
+    // TODO: Update Character Count Label
+    
+    // The new text should be allowed? True/False
+    return newText.length < characterLimit;
+}
+
 
 /*
 #pragma mark - Navigation
